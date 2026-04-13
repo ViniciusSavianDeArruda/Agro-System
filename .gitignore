@@ -1,0 +1,33 @@
+# Dependências
+node_modules/
+
+# Arquivos de ambiente 
+.env
+.env.*
+
+# Prisma
+prisma/generated/
+generated/prisma/
+
+dist/
+build/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+.DS_Store
+Thumbs.db
+
+# IDE / editor
+.vscode/
+.idea/
+
+# Cache
+.cache/
+.tmp/
+
+# TypeScript
+*.tsbuildinfo
