@@ -1,3 +1,5 @@
+# Agro System — Instruções para o Copilot
+
 ## Contexto do Projeto
 
 Você está me ajudando a construir o **Agro System**, um sistema de gestão agrícola para pequenos produtores rurais.
@@ -11,7 +13,9 @@ Você está me ajudando a construir o **Agro System**, um sistema de gestão agr
 
 ### Servidor HTTP
 - **Fastify v5** — framework principal
-- **@fastify/cors** — liberação de CORS para o frontend
+- **@fastify/cors** — liberação de CORS configurada por origem explícita (nunca `origin: "*"` em produção)
+- **@fastify/helmet** — headers HTTP de segurança obrigatórios (XSS, clickjacking, MIME sniffing)
+- **@fastify/rate-limit** — proteção contra brute force e abuso de API
 - **@fastify/swagger** — geração automática de documentação OpenAPI
 - **@fastify/swagger-ui** — UI visual da documentação (Swagger UI)
 
@@ -20,10 +24,16 @@ Você está me ajudando a construir o **Agro System**, um sistema de gestão agr
 - **PostgreSQL** rodando via **Docker** (`docker-compose.yml` + `Dockerfile` na raiz do backend)
 
 ### Validação
-- **Zod v4** — validação de dados de entrada nas rotas
+- **Zod v4** — validação de dados de entrada nas rotas com `.strip()` obrigatório para remover campos extras
+
+### Autenticação
+- **JWT** com access token de curta duração + refresh token de longa duração
+- Tokens armazenados de forma segura (refresh token em cookie `httpOnly`)
+- Nunca expor o payload completo do JWT no cliente
 
 ### Logging
 - **pino-pretty** — logs formatados e legíveis no terminal
+- **Regra:** nunca logar senhas, tokens, CPFs ou qualquer dado sensível
 
 ### Qualidade de Código
 - **ESLint** + **@typescript-eslint** — linting e regras de TypeScript
@@ -47,23 +57,97 @@ agro-system/
 │   └── copilot-instructions.md
 └── backend/
     ├── src/
-    │   ├── controllers/   # lógica das requisições (recebe, valida, responde)
-    │   ├── routes/        # definição das rotas Fastify
+    │   ├── config/        # validação de variáveis de ambiente com Zod
+    │   ├── controllers/   # recebe a requisição, chama o service, responde
+    │   ├── routes/        # definição das rotas Fastify + schemas Swagger
     │   ├── services/      # regras de negócio (cálculos, lógica de domínio)
+    │   ├── repositories/  # acesso ao banco de dados via Prisma
+    │   ├── errors/        # classes de erro tipadas (NotFoundError, etc.)
+    │   ├── middlewares/   # autenticação JWT, verificação de permissões
     │   ├── database/      # instância do PrismaClient
     │   └── server.ts      # entrada da aplicação (inicializa Fastify)
     ├── prisma/
     │   ├── migrations/    # histórico de migrations do banco
     │   └── schema.prisma  # modelos do banco (sem URL de conexão)
     ├── prisma.config.ts   # URL de conexão e config do Prisma v7
-    ├── .env               # variáveis de ambiente (DATABASE_URL etc.)
-    ├── Dockerfile         # imagem Docker do backend
-    ├── docker-compose.yml # orquestra backend + PostgreSQL
+    ├── .env               # variáveis de ambiente (nunca commitar)
+    ├── .env.example       # template das variáveis (sempre manter atualizado)
+    ├── Dockerfile
+    ├── docker-compose.yml
     ├── .gitignore
-    ├── package.json       # "type": "module", scripts, dependências
+    ├── package.json
     ├── pnpm-lock.yaml
     └── tsconfig.json
 ```
+
+---
+
+## Arquitetura em Camadas
+
+A comunicação entre camadas segue esta ordem **obrigatória**. Nenhuma camada pode pular outra.
+
+```
+Requisição HTTP
+      ↓
+   Route          → define o endpoint, schema Swagger e chama o controller
+      ↓
+  Controller      → recebe, valida com Zod, chama o service, responde
+      ↓
+   Service        → executa a regra de negócio, chama o repository
+      ↓
+  Repository      → toda comunicação com o Prisma acontece aqui
+      ↓
+   Prisma ORM
+      ↓
+  PostgreSQL
+```
+
+### Responsabilidade de cada camada
+
+- **Route:** registra o endpoint no Fastify, define o schema OpenAPI para o Swagger e associa ao controller. Não contém lógica.
+- **Controller:** extrai dados da requisição, executa a validação com Zod, chama o service correspondente e retorna a resposta HTTP. Não contém regra de negócio.
+- **Service:** contém toda a lógica de negócio. Pode chamar múltiplos repositories. Lança erros tipados quando uma regra é violada. Não conhece `request` ou `reply`.
+- **Repository:** único lugar onde o Prisma é chamado. Retorna entidades do banco. Não conhece regras de negócio.
+- **Errors:** classes de erro tipadas que permitem que o Fastify retorne respostas HTTP corretas (`NotFoundError → 404`, `UnauthorizedError → 401`, etc.).
+
+---
+
+## Segurança
+
+### Variáveis de Ambiente
+- **Todas** as variáveis de ambiente devem ser validadas com Zod em `src/config/env.ts` na inicialização do servidor
+- O servidor não pode subir com variáveis ausentes ou inválidas — deve lançar erro e encerrar
+- Nunca commitar o `.env`. Manter sempre o `.env.example` atualizado
+
+### Headers HTTP
+- `@fastify/helmet` deve estar registrado **antes** de qualquer rota
+- Nunca desabilitar políticas do helmet sem justificativa documentada no código
+
+### CORS
+- Em desenvolvimento: pode liberar `localhost`
+- Em produção: apenas origens explícitas e conhecidas (`ALLOWED_ORIGIN` via variável de ambiente)
+- Nunca usar `origin: "*"` em produção
+
+### Rate Limiting
+- Aplicar `@fastify/rate-limit` globalmente
+- Rotas de autenticação (login, refresh, cadastro) devem ter limites mais restritivos
+
+### Autenticação e Autorização
+- Toda rota privada deve passar pelo middleware de autenticação JWT
+- O middleware extrai o `userId` do token e injeta em `request.user`
+- O service deve verificar se o recurso solicitado pertence ao `userId` autenticado antes de qualquer operação
+- Nunca confiar em `userId` vindo do body da requisição — sempre usar o token
+
+### Dados Sensíveis
+- **Nunca** logar: senhas, tokens JWT, refresh tokens, dados pessoais
+- Senhas devem ser armazenadas com **bcrypt** (mínimo 12 rounds)
+- Respostas de erro não devem expor stack trace em produção
+- Erros internos do banco de dados não devem chegar ao cliente com detalhes técnicos
+
+### Validação de Entrada
+- Todo dado de entrada validado com Zod **antes** de chegar ao controller
+- Usar `.strip()` nos schemas Zod para remover campos não declarados automaticamente
+- IDs vindos de parâmetros de rota (`params`) devem ser validados como UUIDs
 
 ---
 
@@ -80,14 +164,72 @@ agro-system/
 
 ## Regras de Negócio
 
-- Cada usuário só acessa seus próprios dados (autenticação por JWT no futuro)
+- Cada usuário só acessa seus próprios dados (verificado no service via `userId` do token)
 - Plantações pertencem a um único usuário
 - Gastos e colheitas pertencem a uma plantação
 - Lucro é calculado como: `receita da colheita - total de gastos da plantação`
-- Estoque não pode ficar negativo (validar antes de qualquer baixa)
+- Estoque não pode ficar negativo (validar no service antes de qualquer baixa)
 - Tarefas têm data e status de conclusão (`completed: boolean`)
 - Toda rota deve ser documentada via Swagger (`@fastify/swagger`)
-- Dados de entrada devem ser validados com **Zod** antes de chegar no controller
+- Dados de entrada devem ser validados com Zod antes de chegar no controller
+
+---
+
+## Tratamento de Erros
+
+### Classes de erro tipadas (em `src/errors/`)
+
+Criar uma classe base `AppError` e estender para cada caso:
+
+```
+AppError (base)
+  ├── NotFoundError       → HTTP 404
+  ├── UnauthorizedError   → HTTP 401
+  ├── ForbiddenError      → HTTP 403
+  ├── ValidationError     → HTTP 422
+  └── ConflictError       → HTTP 409
+```
+
+### Handler global
+- Registrar um `setErrorHandler` no Fastify para interceptar todos os erros
+- Erros do tipo `AppError`: retornar o status e mensagem definidos na classe
+- Erros desconhecidos: retornar 500 com mensagem genérica, logar o detalhe internamente
+- Em produção: nunca expor stack trace na resposta
+
+---
+
+## Testes
+
+### Organização
+- Testes unitários: ficam em `src/services/` e `src/repositories/` (arquivos `.spec.ts`)
+- Testes de integração: ficam em `src/routes/` (arquivos `.test.ts`)
+- Mocks do Prisma: usar `vitest.mock()` nos testes de service; nos testes de rota, usar banco de dados de teste isolado
+
+### Cobertura mínima
+- Services: 80%
+- Repositories: 60%
+- Controllers/Routes: cobertos pelos testes de integração
+
+### Padrão
+- Cada teste deve ser independente — nenhum teste depende do estado de outro
+- Banco de testes deve ser limpo antes de cada suite de integração
+
+---
+
+## Documentação de Rotas (Swagger)
+
+- Toda rota deve declarar: `tags`, `summary`, `body` (quando aplicável), `params` (quando aplicável), `response` para todos os status possíveis
+- Schemas de request e response devem ser definidos com Zod e convertidos para JSON Schema
+- A documentação deve estar sempre sincronizada com o comportamento real da rota
+
+---
+
+## Commits
+
+- Sempre usar o padrão **Conventional Commits**
+- Exemplos: `feat:`, `fix:`, `chore:`, `refactor:`, `docs:`, `test:`, `security:`
+- Mensagens em português
+- Nunca commitar arquivos `.env`, `node_modules`, ou chaves privadas
 
 ---
 
@@ -105,11 +247,13 @@ Quando eu pedir ajuda:
 - Me diga como aquilo se encaixa na arquitetura do projeto
 - Aponte possíveis problemas ou decisões que eu deveria tomar
 - Prefira soluções simples antes de soluções complexas
+- Se a mudança afetar segurança, me avise explicitamente
 
 Quando sugerir código:
 - Mostre o arquivo completo com a alteração
 - Explique cada parte importante com comentários
 - Me avise se a mudança afeta outros arquivos
+- Me avise se um novo pacote precisa ser instalado, o que ele faz e por quê
 
 Se eu errar algo:
 - Me corrija de forma didática
@@ -121,10 +265,8 @@ Se eu errar algo:
 - Refatore código sem minha autorização
 - Tome decisões de arquitetura por conta própria
 - Instale pacotes sem avisar o que fazem e por quê
-
----
-## Commits
-
-- Sempre que sugerir, executar ou recomendar commits, use o padrão Conventional Commits.
-- Se eu pedir sugestão de mensagem de commit, sempre sugira no formato Conventional Commits.
-- Exemplos: feat:, fix:, chore:, refactor:, docs:, test:, etc.
+- Pule a camada de repository e acesse o Prisma diretamente no service
+- Coloque lógica de negócio no controller
+- Use `origin: "*"` no CORS
+- Logue dados sensíveis
+- Deixe variáveis de ambiente sem validação
