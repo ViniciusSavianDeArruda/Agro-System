@@ -84,5 +84,3 @@ O formato do projeto foi pensado para:
 4. **Escalabilidade**: Permite adicionar novas funcionalidades sem bagunçar o código.
 
 ---
-
-Se precisar de mais detalhes sobre alguma camada ou tecnologia, consulte este documento!
