@@ -1,30 +1,24 @@
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
-import rateLimit from "@fastify/rate-limit";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
-import dotenv from "dotenv";
+import "dotenv/config";
 import Fastify from "fastify";
-
-dotenv.config();
+import { userRoutes } from "./routes/userRoutes.js";
 
 const app = Fastify();
 
-// Configurar Helmet para segurança
 app.register(helmet);
 
 // Configurar CORS com origem permitida
 app.register(cors, {
-  origin: process.env.ALLOWED_ORIGIN || "http://localhost:3000",
+  origin: process.env.ALLOWED_ORIGIN || "http://localhost:3333",
 });
 
 // Configurar Rate Limit para evitar abusos
-app.register(rateLimit, {
-  max: parseInt(process.env.RATE_LIMIT_MAX || "100"),
-  timeWindow: process.env.RATE_LIMIT_TIME_WINDOW || "1 minute",
-});
+// app.register(rateLimit, { max: 100, timeWindow: "1 minute" });
 
-// Configurar Swagger para documentação
+// Configurar Swagger
 app.register(swagger, {
   swagger: {
     info: {
@@ -47,8 +41,11 @@ app.get("/", async () => {
   return { message: "API System- agro na porta " + process.env.PORT };
 });
 
+// Registrar rotas de usuários
+app.register(userRoutes);
+
 // Iniciar o servidor
-const PORT = parseInt(process.env.PORT || "3001");
+const PORT = parseInt(process.env.PORT || "3333");
 app.listen({ port: PORT }).then(() => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });

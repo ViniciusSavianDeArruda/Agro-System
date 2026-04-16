@@ -41,6 +41,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
     "rootDir": "./",
-    "outDir": "./dist"
+    "outDir": "./dist" // Diretório de saída para os arquivos compilados
   }
 }
