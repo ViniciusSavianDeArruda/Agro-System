@@ -141,7 +141,7 @@ Requisição HTTP
 ### Dados Sensíveis
 - **Nunca** logar: senhas, tokens JWT, refresh tokens, dados pessoais
 - Senhas devem ser armazenadas com **bcrypt** (mínimo 12 rounds)
-- Respostas de erro não devem expor stack trace em produção
+- Respostas de err  o não devem expor stack trace em produção
 - Erros internos do banco de dados não devem chegar ao cliente com detalhes técnicos
 
 ### Validação de Entrada
@@ -270,3 +270,58 @@ Se eu errar algo:
 - Use `origin: "*"` no CORS
 - Logue dados sensíveis
 - Deixe variáveis de ambiente sem validação
+
+---
+
+## Modo Aula — Como Me Ensinar Durante o Projeto
+
+Este projeto também é um processo de aprendizado. Cada etapa que formos construindo juntos deve ser tratada como uma **aula prática**. Siga estas regras ao me apresentar qualquer código:
+
+### Antes de escrever o código
+- Me explique **o problema que estamos resolvendo** nessa etapa
+- Me diga **qual camada da arquitetura** estamos mexendo e por quê
+- Me explique **o raciocínio** por trás da solução antes de mostrá-la
+- Me diga se existe mais de uma forma de resolver — e por que vamos com essa
+
+### Ao apresentar o código
+- Apresente o código **em blocos pequenos**, nunca tudo de uma vez
+- Cada bloco deve vir acompanhado de uma explicação em português simples
+- Use **comentários didáticos** diretamente no código explicando o que aquela linha ou bloco faz
+- Destaque quando um trecho for uma **boa prática** de segurança, performance ou organização
+- Se usar algum conceito de TypeScript, Node.js ou do Fastify que eu possa não conhecer, **explique brevemente o conceito** antes de usá-lo
+
+### Forma de pensar para a web
+- Sempre que fizer sentido, me explique o **fluxo completo** da requisição: o que sai do frontend, passa pela rota, controller, service, repository, banco, e volta
+- Me explique o **"porquê"** das decisões de arquitetura, não só o "como"
+- Quando usarmos um padrão (ex: Repository Pattern, camadas separadas), me explique **qual problema aquele padrão resolve**
+- Me avise quando uma decisão que estamos tomando for comum no mercado de trabalho
+
+### Quando eu errar
+- Me corrija de forma didática, explicando **o que causou o erro** e **como pensar para não errar de novo**
+- Se for um erro comum entre iniciantes, me diga isso — ajuda a criar consciência
+- Nunca apenas me dê a correção sem explicar o porquê
+
+### Exemplo de como quero ser ensinado
+
+❌ **Não quero assim:**
+
+> "Aqui está o código do repository:"
+> ```ts
+> async findById(id: string) { return prisma.user.findUnique({ where: { id } }) }
+> ```
+
+✅ **Quero assim:**
+
+> "Vamos criar a função `findById` no repository do User. Lembra que o repository é a única camada que fala com o banco? Então toda vez que precisarmos buscar um usuário pelo ID em qualquer parte do sistema, vamos chamar essa função — nunca o Prisma diretamente.
+>
+> O `findUnique` do Prisma busca **exatamente um registro** que corresponda à condição. Se não encontrar, ele retorna `null` (não lança erro). Por isso, mais pra frente no service, vamos checar se o retorno foi `null` e lançar um `NotFoundError` se for."
+>
+> ```ts
+> // Busca um usuário pelo ID no banco.
+> // Retorna null se não encontrar — quem decide o que fazer com isso é o service.
+> async findById(id: string) {
+>   return prisma.user.findUnique({
+>     where: { id },
+>   })
+> }
+> ```

@@ -43,7 +43,6 @@ app.register(swaggerUi, {
   },
 });
 
-// Rota básica para teste
 app.get("/", async () => {
   return { message: "API System- agro na porta " + process.env.PORT };
 });
