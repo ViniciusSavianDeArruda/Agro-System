@@ -26,6 +26,12 @@ export class UserService {
       throw new Error('Email inválido');
     }
 
+    // Verifica se o email já existe no banco de dados
+    const existingUser = await userRepository.findByEmail(data.email);
+    if (existingUser) {
+      throw new Error('Email já está em uso');
+    }
+
     // Chama o repository para criar o usuário
     return userRepository.createUser(data);
   }
