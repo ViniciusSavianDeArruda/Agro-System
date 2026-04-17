@@ -1,37 +1,37 @@
 export const plantationRoutesDocs = {
   createPlantation: {
     body: {
-      type: 'object',
+      type: "object",
       properties: {
-        name: { type: 'string' },
+        name: { type: "string" },
       },
-      required: ['name'],
+      required: ["name"],
     },
     headers: {
-      type: 'object',
+      type: "object",
       properties: {
         Authorization: {
-          type: 'string',
-          description: 'Bearer token necessário para autenticação',
+          type: "string",
+          description: "Bearer token necessário para autenticação",
         },
       },
-      required: ['Authorization'],
+      required: ["Authorization"],
     },
     response: {
       201: {
-        type: 'object',
+        type: "object",
         properties: {
-          id: { type: 'string', format: 'uuid' },
-          name: { type: 'string' },
-          userId: { type: 'string', format: 'uuid' },
-          createdAt: { type: 'string', format: 'date-time' },
-          updatedAt: { type: 'string', format: 'date-time' },
+          id: { type: "string", format: "uuid" },
+          name: { type: "string" },
+          userId: { type: "string", format: "uuid" },
+          createdAt: { type: "string", format: "date-time" },
+          updatedAt: { type: "string", format: "date-time" },
         },
       },
       401: {
-        type: 'object',
+        type: "object",
         properties: {
-          error: { type: 'string' },
+          error: { type: "string" },
         },
       },
     },
@@ -41,40 +41,40 @@ export const plantationRoutesDocs = {
 export const harvestRoutesDocs = {
   createHarvest: {
     body: {
-      type: 'object',
+      type: "object",
       properties: {
-        plantationId: { type: 'string', format: 'uuid' },
-        revenue: { type: 'number' },
-        date: { type: 'string', format: 'date' },
+        plantationId: { type: "string", format: "uuid" },
+        revenue: { type: "number" },
+        date: { type: "string", format: "date" },
       },
-      required: ['plantationId', 'revenue', 'date'],
+      required: ["plantationId", "revenue", "date"],
     },
     headers: {
-      type: 'object',
+      type: "object",
       properties: {
         Authorization: {
-          type: 'string',
-          description: 'Bearer token necessário para autenticação',
+          type: "string",
+          description: "Bearer token necessário para autenticação",
         },
       },
-      required: ['Authorization'],
+      required: ["Authorization"],
     },
     response: {
       201: {
-        type: 'object',
+        type: "object",
         properties: {
-          id: { type: 'string', format: 'uuid' },
-          plantationId: { type: 'string', format: 'uuid' },
-          revenue: { type: 'number' },
-          date: { type: 'string', format: 'date' },
-          createdAt: { type: 'string', format: 'date-time' },
-          updatedAt: { type: 'string', format: 'date-time' },
+          id: { type: "string", format: "uuid" },
+          plantationId: { type: "string", format: "uuid" },
+          revenue: { type: "number" },
+          date: { type: "string", format: "date" },
+          createdAt: { type: "string", format: "date-time" },
+          updatedAt: { type: "string", format: "date-time" },
         },
       },
       401: {
-        type: 'object',
+        type: "object",
         properties: {
-          error: { type: 'string' },
+          error: { type: "string" },
         },
       },
     },
@@ -84,42 +84,42 @@ export const harvestRoutesDocs = {
 export const expenseRoutesDocs = {
   createExpense: {
     body: {
-      type: 'object',
+      type: "object",
       properties: {
-        plantationId: { type: 'string', format: 'uuid' },
-        description: { type: 'string' },
-        amount: { type: 'number' },
-        date: { type: 'string', format: 'date' },
+        plantationId: { type: "string", format: "uuid" },
+        description: { type: "string" },
+        amount: { type: "number" },
+        date: { type: "string", format: "date" },
       },
-      required: ['plantationId', 'description', 'amount', 'date'],
+      required: ["plantationId", "description", "amount", "date"],
     },
     headers: {
-      type: 'object',
+      type: "object",
       properties: {
         Authorization: {
-          type: 'string',
-          description: 'Bearer token necessário para autenticação',
+          type: "string",
+          description: "Bearer token necessário para autenticação",
         },
       },
-      required: ['Authorization'],
+      required: ["Authorization"],
     },
     response: {
       201: {
-        type: 'object',
+        type: "object",
         properties: {
-          id: { type: 'string', format: 'uuid' },
-          plantationId: { type: 'string', format: 'uuid' },
-          description: { type: 'string' },
-          amount: { type: 'number' },
-          date: { type: 'string', format: 'date' },
-          createdAt: { type: 'string', format: 'date-time' },
-          updatedAt: { type: 'string', format: 'date-time' },
+          id: { type: "string", format: "uuid" },
+          plantationId: { type: "string", format: "uuid" },
+          description: { type: "string" },
+          amount: { type: "number" },
+          date: { type: "string", format: "date" },
+          createdAt: { type: "string", format: "date-time" },
+          updatedAt: { type: "string", format: "date-time" },
         },
       },
       401: {
-        type: 'object',
+        type: "object",
         properties: {
-          error: { type: 'string' },
+          error: { type: "string" },
         },
       },
     },

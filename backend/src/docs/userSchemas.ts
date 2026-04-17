@@ -1,84 +1,92 @@
 export const createUserSchema = {
-  type: 'object',
+  type: "object",
   properties: {
-    name: { type: 'string' },
-    email: { type: 'string' },
+    name: { type: "string" },
+    email: { type: "string" },
   },
-  required: ['name', 'email'],
+  required: ["name", "email"],
 };
 
 export const createUserResponseSchema = {
   201: {
-    type: 'object',
+    type: "object",
     properties: {
-      id: { type: 'string' },
-      name: { type: 'string' },
-      email: { type: 'string' },
+      id: { type: "string" },
+      name: { type: "string" },
+      email: { type: "string" },
     },
   },
   500: {
-    type: 'object',
+    type: "object",
     properties: {
-      error: { type: 'string' },
+      error: { type: "string" },
     },
   },
 };
 
 export const listUsersResponseSchema = {
   200: {
-    type: 'array',
+    type: "array",
     items: {
-      type: 'object',
+      type: "object",
       properties: {
-        id: { type: 'string' },
-        name: { type: 'string' },
-        email: { type: 'string' },
+        id: { type: "string" },
+        name: { type: "string" },
+        email: { type: "string" },
       },
     },
   },
   500: {
-    type: 'object',
+    type: "object",
     properties: {
-      error: { type: 'string' },
+      error: { type: "string" },
     },
   },
 };
 
 export const plantationSchema = {
-  type: 'object',
+  type: "object",
   properties: {
-    id: { type: 'string', format: 'uuid' },
-    name: { type: 'string' },
-    userId: { type: 'string', format: 'uuid' },
-    createdAt: { type: 'string', format: 'date-time' },
-    updatedAt: { type: 'string', format: 'date-time' },
+    id: { type: "string", format: "uuid" },
+    name: { type: "string" },
+    userId: { type: "string", format: "uuid" },
+    createdAt: { type: "string", format: "date-time" },
+    updatedAt: { type: "string", format: "date-time" },
   },
-  required: ['id', 'name', 'userId', 'createdAt', 'updatedAt'],
+  required: ["id", "name", "userId", "createdAt", "updatedAt"],
 };
 
 export const harvestSchema = {
-  type: 'object',
+  type: "object",
   properties: {
-    id: { type: 'string', format: 'uuid' },
-    plantationId: { type: 'string', format: 'uuid' },
-    revenue: { type: 'number' },
-    date: { type: 'string', format: 'date' },
-    createdAt: { type: 'string', format: 'date-time' },
-    updatedAt: { type: 'string', format: 'date-time' },
+    id: { type: "string", format: "uuid" },
+    plantationId: { type: "string", format: "uuid" },
+    revenue: { type: "number" },
+    date: { type: "string", format: "date" },
+    createdAt: { type: "string", format: "date-time" },
+    updatedAt: { type: "string", format: "date-time" },
   },
-  required: ['id', 'plantationId', 'revenue', 'date', 'createdAt', 'updatedAt'],
+  required: ["id", "plantationId", "revenue", "date", "createdAt", "updatedAt"],
 };
 
 export const expenseSchema = {
-  type: 'object',
+  type: "object",
   properties: {
-    id: { type: 'string', format: 'uuid' },
-    plantationId: { type: 'string', format: 'uuid' },
-    description: { type: 'string' },
-    amount: { type: 'number' },
-    date: { type: 'string', format: 'date' },
-    createdAt: { type: 'string', format: 'date-time' },
-    updatedAt: { type: 'string', format: 'date-time' },
+    id: { type: "string", format: "uuid" },
+    plantationId: { type: "string", format: "uuid" },
+    description: { type: "string" },
+    amount: { type: "number" },
+    date: { type: "string", format: "date" },
+    createdAt: { type: "string", format: "date-time" },
+    updatedAt: { type: "string", format: "date-time" },
   },
-  required: ['id', 'plantationId', 'description', 'amount', 'date', 'createdAt', 'updatedAt'],
+  required: [
+    "id",
+    "plantationId",
+    "description",
+    "amount",
+    "date",
+    "createdAt",
+    "updatedAt",
+  ],
 };
