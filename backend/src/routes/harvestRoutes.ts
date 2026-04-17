@@ -33,14 +33,8 @@ export async function harvestRoutes(app: FastifyInstance) {
 
   app.get('/plantations/:plantationId/harvests', {
     schema: {
+      ...harvestRoutesDocs.getHarvestsByPlantation,
       tags: ['Harvests'],
-      params: {
-        type: 'object',
-        properties: {
-          plantationId: { type: 'string', format: 'uuid' },
-        },
-        required: ['plantationId'],
-      },
     },
   }, async (req, reply) => {
     return harvestController.getHarvestsByPlantation(req, reply);
@@ -48,6 +42,7 @@ export async function harvestRoutes(app: FastifyInstance) {
 
   app.delete('/harvests/:id', {
     schema: {
+      ...harvestRoutesDocs.deleteHarvest,
       tags: ['Harvests'],
     },
   }, harvestController.deleteHarvest);

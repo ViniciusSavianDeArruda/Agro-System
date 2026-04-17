@@ -35,14 +35,8 @@ export async function expenseRoutes(app: FastifyInstance) {
 
   app.get('/plantations/:plantationId/expenses', {
     schema: {
+      ...expenseRoutesDocs.getExpensesByPlantation,
       tags: ['Expenses'],
-      params: {
-        type: 'object',
-        properties: {
-          plantationId: { type: 'string', format: 'uuid' },
-        },
-        required: ['plantationId'],
-      },
     },
   }, async (req, reply) => {
     return expenseController.getExpensesByPlantation(req, reply);
@@ -50,6 +44,7 @@ export async function expenseRoutes(app: FastifyInstance) {
 
   app.delete('/expenses/:id', {
     schema: {
+      ...expenseRoutesDocs.deleteExpense,
       tags: ['Expenses'],
     },
   }, expenseController.deleteExpense);
