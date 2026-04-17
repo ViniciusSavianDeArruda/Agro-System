@@ -7,6 +7,16 @@ export const plantationRoutesDocs = {
       },
       required: ['name'],
     },
+    headers: {
+      type: 'object',
+      properties: {
+        Authorization: {
+          type: 'string',
+          description: 'Bearer token necessário para autenticação',
+        },
+      },
+      required: ['Authorization'],
+    },
     response: {
       201: {
         type: 'object',
@@ -16,6 +26,12 @@ export const plantationRoutesDocs = {
           userId: { type: 'string', format: 'uuid' },
           createdAt: { type: 'string', format: 'date-time' },
           updatedAt: { type: 'string', format: 'date-time' },
+        },
+      },
+      401: {
+        type: 'object',
+        properties: {
+          error: { type: 'string' },
         },
       },
     },
@@ -33,6 +49,16 @@ export const harvestRoutesDocs = {
       },
       required: ['plantationId', 'revenue', 'date'],
     },
+    headers: {
+      type: 'object',
+      properties: {
+        Authorization: {
+          type: 'string',
+          description: 'Bearer token necessário para autenticação',
+        },
+      },
+      required: ['Authorization'],
+    },
     response: {
       201: {
         type: 'object',
@@ -43,6 +69,12 @@ export const harvestRoutesDocs = {
           date: { type: 'string', format: 'date' },
           createdAt: { type: 'string', format: 'date-time' },
           updatedAt: { type: 'string', format: 'date-time' },
+        },
+      },
+      401: {
+        type: 'object',
+        properties: {
+          error: { type: 'string' },
         },
       },
     },
@@ -61,6 +93,16 @@ export const expenseRoutesDocs = {
       },
       required: ['plantationId', 'description', 'amount', 'date'],
     },
+    headers: {
+      type: 'object',
+      properties: {
+        Authorization: {
+          type: 'string',
+          description: 'Bearer token necessário para autenticação',
+        },
+      },
+      required: ['Authorization'],
+    },
     response: {
       201: {
         type: 'object',
@@ -72,6 +114,12 @@ export const expenseRoutesDocs = {
           date: { type: 'string', format: 'date' },
           createdAt: { type: 'string', format: 'date-time' },
           updatedAt: { type: 'string', format: 'date-time' },
+        },
+      },
+      401: {
+        type: 'object',
+        properties: {
+          error: { type: 'string' },
         },
       },
     },
