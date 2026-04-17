@@ -4,6 +4,9 @@ import swagger from "@fastify/swagger";
 import "dotenv/config";
 import Fastify from "fastify";
 import { userRoutes } from "./routes/userRoutes.js";
+import { plantationRoutes } from "./routes/plantationRoutes.js";
+import { harvestRoutes } from "./routes/harvestRoutes.js";
+import { expenseRoutes } from "./routes/expenseRoutes.js";
 
 const app = Fastify();
 
@@ -79,6 +82,10 @@ app.get("/", async () => {
 
 // Registrar rotas de usuários
 app.register(userRoutes);
+// Registrar rotas de domínio
+app.register(plantationRoutes);
+app.register(harvestRoutes);
+app.register(expenseRoutes);
 
 // Debug: print routes to help diagnose static file serving
 setTimeout(() => {

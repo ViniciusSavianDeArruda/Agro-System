@@ -22,6 +22,7 @@ model Plantation {
   expenses Expense[]
   harvests Harvest[]
   user     User      @relation(fields: [userId], references: [id])
+  @@map("plantation") // Força o nome da tabela para minúsculas
 }
 
 model Harvest {
@@ -30,6 +31,7 @@ model Harvest {
   revenue      Float
   date         DateTime
   plantation   Plantation @relation(fields: [plantationId], references: [id])
+  @@map("harvest") // Força o nome da tabela para minúsculas
 }
 
 model Expense {
@@ -39,6 +41,7 @@ model Expense {
   amount       Float
   date         DateTime
   plantation   Plantation @relation(fields: [plantationId], references: [id])
+  @@map("expense") // Força o nome da tabela para minúsculas
 }
 
 model Inventory {

@@ -59,6 +59,7 @@ agro-system/
     ├── src/
     │   ├── config/        # validação de variáveis de ambiente com Zod
     │   ├── controllers/   # recebe a requisição, chama o service, responde
+    │   ├── docs/          # schemas do Swagger separados por entidade
     │   ├── routes/        # definição das rotas Fastify + schemas Swagger
     │   ├── services/      # regras de negócio (cálculos, lógica de domínio)
     │   ├── repositories/  # acesso ao banco de dados via Prisma
@@ -141,7 +142,7 @@ Requisição HTTP
 ### Dados Sensíveis
 - **Nunca** logar: senhas, tokens JWT, refresh tokens, dados pessoais
 - Senhas devem ser armazenadas com **bcrypt** (mínimo 12 rounds)
-- Respostas de err  o não devem expor stack trace em produção
+- Respostas de erro não devem expor stack trace em produção
 - Erros internos do banco de dados não devem chegar ao cliente com detalhes técnicos
 
 ### Validação de Entrada
@@ -221,6 +222,23 @@ AppError (base)
 - Toda rota deve declarar: `tags`, `summary`, `body` (quando aplicável), `params` (quando aplicável), `response` para todos os status possíveis
 - Schemas de request e response devem ser definidos com Zod e convertidos para JSON Schema
 - A documentação deve estar sempre sincronizada com o comportamento real da rota
+
+### Organização dos Schemas de Documentação
+
+Os schemas usados pelo Swagger ficam em `src/docs/`, separados por entidade:
+
+```
+src/docs/
+├── expenseSchemas.ts      # schemas de request/response das rotas de gastos
+├── harvestSchemas.ts      # schemas de request/response das rotas de colheitas
+├── plantationSchemas.ts   # schemas de request/response das rotas de plantações
+├── routeSchemas.ts        # schemas compartilhados entre rotas (ex: resposta de erro)
+└── userSchemas.ts         # schemas de request/response das rotas de usuários
+```
+
+- Cada arquivo exporta os schemas da sua entidade (body, params, response)
+- A route importa o schema correspondente de `src/docs/` e o referencia no Swagger
+- Nunca definir schemas inline dentro do arquivo de rota — sempre importar de `src/docs/`
 
 ---
 
