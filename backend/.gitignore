@@ -35,5 +35,5 @@ Thumbs.db
 # TypeScript
 *.tsbuildinfo
 
-# Docker volumes (caso use pasta local)
+# Docker volumes 
 postgres_data/
