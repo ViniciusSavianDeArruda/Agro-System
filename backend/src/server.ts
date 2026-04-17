@@ -3,7 +3,6 @@ import helmet from "@fastify/helmet";
 import swagger from "@fastify/swagger";
 import "dotenv/config";
 import Fastify from "fastify";
-import { authMiddleware } from "./middlewares/authMiddleware.js";
 import { expenseRoutes } from "./routes/expenseRoutes.js";
 import { harvestRoutes } from "./routes/harvestRoutes.js";
 import { inventoryRoutes } from "./routes/inventoryRoutes.js";
@@ -87,11 +86,11 @@ app.get("/", async () => {
 // Registrar rotas de usuários
 app.register(userRoutes);
 // Registrar rotas de domínio
-app.register(plantationRoutes, { onRequest: [authMiddleware] });
-app.register(harvestRoutes, { onRequest: [authMiddleware] });
-app.register(expenseRoutes, { onRequest: [authMiddleware] });
-app.register(inventoryRoutes, { onRequest: [authMiddleware] });
-app.register(taskRoutes, { onRequest: [authMiddleware] });
+app.register(plantationRoutes);
+app.register(harvestRoutes);
+app.register(expenseRoutes);
+app.register(inventoryRoutes);
+app.register(taskRoutes);
 
 // Debug: print routes to help diagnose static file serving
 setTimeout(() => {
