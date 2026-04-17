@@ -7,6 +7,9 @@ import { userRoutes } from "./routes/userRoutes.js";
 import { plantationRoutes } from "./routes/plantationRoutes.js";
 import { harvestRoutes } from "./routes/harvestRoutes.js";
 import { expenseRoutes } from "./routes/expenseRoutes.js";
+import { inventoryRoutes } from "./routes/inventoryRoutes.js";
+import { taskRoutes } from "./routes/taskRoutes.js";
+import { authMiddleware } from "./middlewares/authMiddleware.js";
 
 const app = Fastify();
 
@@ -83,9 +86,11 @@ app.get("/", async () => {
 // Registrar rotas de usuários
 app.register(userRoutes);
 // Registrar rotas de domínio
-app.register(plantationRoutes);
-app.register(harvestRoutes);
-app.register(expenseRoutes);
+app.register(plantationRoutes, { onRequest: [authMiddleware] });
+app.register(harvestRoutes, { onRequest: [authMiddleware] });
+app.register(expenseRoutes, { onRequest: [authMiddleware] });
+app.register(inventoryRoutes, { onRequest: [authMiddleware] });
+app.register(taskRoutes, { onRequest: [authMiddleware] });
 
 // Debug: print routes to help diagnose static file serving
 setTimeout(() => {
