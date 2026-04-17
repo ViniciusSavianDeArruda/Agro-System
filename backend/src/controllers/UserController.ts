@@ -1,5 +1,8 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { UserService } from '../services/userService.js';
+import { pino } from "pino";
+
+const logger = pino();
 
 export class UserController {
   private userService: UserService;
@@ -11,10 +14,21 @@ export class UserController {
   // Método para listar usuários
   async listUsers(request: FastifyRequest, reply: FastifyReply) {
     try {
+      logger.info("[Controller] Received request to list users");
       const users = await this.userService.getAllUsers();
-      return reply.send(users);
+      logger.info({ users }, "[Controller] Users listed successfully");
+      return reply.send({
+        message: 'Sucesso ao listar usuários',
+        count: users.length,
+        users,
+      });
     } catch (error) {
-      return reply.status(500).send({ error: 'Erro ao listar usuários' });
+      const errMessage = error instanceof Error ? error.message : "Unknown error";
+      logger.error({ error }, "[Controller] Error listing users");
+      return reply.status(500).send({
+        error: 'Erro ao listar usuários',
+        details: errMessage,
+      });
     }
   }
 

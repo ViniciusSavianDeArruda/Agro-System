@@ -12,6 +12,7 @@ model User {
   inventories Inventory[]
   plantations Plantation[]
   tasks       Task[]
+  @@map("user") // Força o nome da tabela para minúsculas
 }
 
 model Plantation {

@@ -40,7 +40,7 @@ export async function userRoutes(app: FastifyInstance) {
     userController.createUser.bind(userController)
   );
 
-  // Rota para listar usuários
+  // Rota para listar todos os usuários
   app.get(
     '/users',
     {
@@ -49,13 +49,20 @@ export async function userRoutes(app: FastifyInstance) {
         summary: 'Lista todos os usuários',
         response: {
           200: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                id: { type: 'string' },
-                name: { type: 'string' },
-                email: { type: 'string' },
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+              count: { type: 'number' },
+              users: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string' },
+                    name: { type: 'string' },
+                    email: { type: 'string' },
+                  },
+                },
               },
             },
           },

@@ -15,9 +15,6 @@ app.register(cors, {
   origin: process.env.ALLOWED_ORIGIN || "http://localhost:3333",
 });
 
-// Configurar Rate Limit para evitar abusos
-// app.register(rateLimit, { max: 100, timeWindow: "1 minute" });
-
 // Configurar Swagger
 app.register(swagger, {
   swagger: {
@@ -44,8 +41,13 @@ app.get("/", async () => {
 // Registrar rotas de usuários
 app.register(userRoutes);
 
-// Iniciar o servidor
 const PORT = parseInt(process.env.PORT || "3333");
-app.listen({ port: PORT }).then(() => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+
+app.listen({ port: PORT })
+  .then(() => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+  })
+  .catch((err) => {
+    console.error("Erro ao iniciar o servidor:", err);
+    process.exit(1);
+  });

@@ -1,11 +1,22 @@
 import { UserRepository } from '../repositories/userRepository.js';
+import { pino } from "pino";
 
 const userRepository = new UserRepository();
+const logger = pino();
 
 export class UserService {
   // Método para listar todos os usuários
   async getAllUsers(): Promise<any[]> {
-    return userRepository.getAllUsers();
+    try {
+      logger.info("[Service] Fetching users in UserService");
+      const users = await userRepository.getAllUsers();
+      logger.info({ users }, "[Service] Users fetched in UserService");
+      return users;
+    } catch (error) {
+      const errMessage = error instanceof Error ? error.message : "Unknown error";
+      logger.error({ error }, "[Service] Error in UserService while fetching users");
+      throw new Error(`Service Error: ${errMessage}`);
+    }
   }
 
   // Método para criar um usuário com validação de dados
