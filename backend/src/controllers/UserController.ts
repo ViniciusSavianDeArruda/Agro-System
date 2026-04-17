@@ -36,10 +36,27 @@ export class UserController {
   async createUser(request: FastifyRequest<{ Body: { name: string; email: string } }>, reply: FastifyReply) {
     try {
       const userData = request.body;
+      logger.info({ userData }, '[Controller] Received request to create user');
+
       const newUser = await this.userService.createUser(userData);
+      logger.info({ newUser }, '[Controller] User created successfully');
+
       return reply.status(201).send(newUser);
     } catch (error) {
-      return reply.status(500).send({ error: 'Erro ao criar usuário' });
+      const errMessage = error instanceof Error ? error.message : 'Unknown error';
+
+      // Verifica se o erro é relacionado ao email duplicado
+      if (errMessage === 'Email já está em uso') {
+        logger.warn({ requestBody: request.body }, '[Controller] Email already in use');
+        return reply.status(409).send({ error: 'Email já está em uso' });
+      }
+
+      logger.error({
+        error,
+        requestBody: request.body,
+      }, '[Controller] Error creating user');
+
+      return reply.status(500).send({ error: 'Erro ao criar usuário', details: errMessage });
     }
   }
 }
