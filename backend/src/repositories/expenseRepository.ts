@@ -1,4 +1,4 @@
-import { prisma } from '../prismaClient.js';
+import { prisma } from '../database/prismaClient.js';
 
 export class ExpenseRepository {
   async createExpense(data: { plantationId: string; description: string; amount: number; date: Date }) {

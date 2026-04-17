@@ -1,4 +1,4 @@
-import { prisma } from "../prismaClient.js";
+import { prisma } from "../database/prismaClient.js";
 import { pino } from "pino";
 
 const logger = pino();
