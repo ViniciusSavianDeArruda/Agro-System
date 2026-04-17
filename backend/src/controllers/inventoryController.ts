@@ -1,5 +1,5 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
-import { inventoryService } from '../services/inventoryService.js';
+import type { FastifyReply, FastifyRequest } from "fastify";
+import { inventoryService } from "../services/inventoryService.js";
 
 export const inventoryController = {
   async createInventory(req: FastifyRequest, reply: FastifyReply) {
@@ -15,7 +15,7 @@ export const inventoryController = {
 
   async updateInventory(
     req: FastifyRequest<{ Params: ParamsWithId; Body: { quantity: number } }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) {
     const { id } = req.params;
     const { quantity } = req.body;
@@ -25,8 +25,8 @@ export const inventoryController = {
   },
 
   async deleteInventory(
-    req: FastifyRequest<{ Params: ParamsWithId }>, 
-    reply: FastifyReply
+    req: FastifyRequest<{ Params: ParamsWithId }>,
+    reply: FastifyReply,
   ) {
     const { id } = req.params;
     await inventoryService.deleteInventory(id);
@@ -39,8 +39,8 @@ interface ParamsWithId {
 }
 
 export async function getInventory(
-  req: FastifyRequest<{ Params: ParamsWithId }>, 
-  reply: FastifyReply
+  req: FastifyRequest<{ Params: ParamsWithId }>,
+  reply: FastifyReply,
 ) {
   const { id } = req.params;
   const inventory = await inventoryService.getInventory(id);

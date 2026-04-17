@@ -1,5 +1,5 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
-import { taskService } from '../services/taskService.js';
+import type { FastifyReply, FastifyRequest } from "fastify";
+import { taskService } from "../services/taskService.js";
 
 export const taskController = {
   async createTask(req: FastifyRequest, reply: FastifyReply) {
@@ -13,14 +13,20 @@ export const taskController = {
     reply.send(tasks);
   },
 
-  async updateTask(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+  async updateTask(
+    req: FastifyRequest<{ Params: { id: string } }>,
+    reply: FastifyReply,
+  ) {
     const { id } = req.params;
     const data = req.body;
     const updatedTask = await taskService.updateTask(id, data);
     reply.send(updatedTask);
   },
 
-  async deleteTask(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+  async deleteTask(
+    req: FastifyRequest<{ Params: { id: string } }>,
+    reply: FastifyReply,
+  ) {
     const { id } = req.params;
     await taskService.deleteTask(id);
     reply.status(204).send();

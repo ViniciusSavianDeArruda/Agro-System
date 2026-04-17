@@ -1,5 +1,5 @@
-import { PlantationService } from '../services/plantationService.js';
-import type { FastifyReply, FastifyRequest } from 'fastify';
+import type { FastifyReply, FastifyRequest } from "fastify";
+import { PlantationService } from "../services/plantationService.js";
 
 const plantationService = new PlantationService();
 
@@ -7,11 +7,11 @@ export class PlantationController {
   async createPlantation(req: FastifyRequest, reply: FastifyReply) {
     try {
       const data = req.body as { name: string; userId?: string };
-      if ((req as any).user && typeof (req as any).user === 'object') {
+      if ((req as any).user && typeof (req as any).user === "object") {
         data.userId = (req as any).user.id;
       }
       if (!data.userId) {
-        return reply.status(400).send({ error: 'User ID is required' });
+        return reply.status(400).send({ error: "User ID is required" });
       }
       const plantation = await plantationService.createPlantation({
         name: data.name,
