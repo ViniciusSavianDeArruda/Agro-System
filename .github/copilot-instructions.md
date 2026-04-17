@@ -26,11 +26,6 @@ Você está me ajudando a construir o **Agro System**, um sistema de gestão agr
 ### Validação
 - **Zod v4** — validação de dados de entrada nas rotas com `.strip()` obrigatório para remover campos extras
 
-### Autenticação
-- **JWT** com access token de curta duração + refresh token de longa duração
-- Tokens armazenados de forma segura (refresh token em cookie `httpOnly`)
-- Nunca expor o payload completo do JWT no cliente
-
 ### Logging
 - **pino-pretty** — logs formatados e legíveis no terminal
 - **Regra:** nunca logar senhas, tokens, CPFs ou qualquer dado sensível
@@ -64,7 +59,6 @@ agro-system/
     │   ├── services/      # regras de negócio (cálculos, lógica de domínio)
     │   ├── repositories/  # acesso ao banco de dados via Prisma
     │   ├── errors/        # classes de erro tipadas (NotFoundError, etc.)
-    │   ├── middlewares/   # autenticação JWT, verificação de permissões
     │   ├── database/      # instância do PrismaClient
     │   └── server.ts      # entrada da aplicação (inicializa Fastify)
     ├── prisma/
@@ -133,14 +127,8 @@ Requisição HTTP
 - Aplicar `@fastify/rate-limit` globalmente
 - Rotas de autenticação (login, refresh, cadastro) devem ter limites mais restritivos
 
-### Autenticação e Autorização
-- Toda rota privada deve passar pelo middleware de autenticação JWT
-- O middleware extrai o `userId` do token e injeta em `request.user`
-- O service deve verificar se o recurso solicitado pertence ao `userId` autenticado antes de qualquer operação
-- Nunca confiar em `userId` vindo do body da requisição — sempre usar o token
-
 ### Dados Sensíveis
-- **Nunca** logar: senhas, tokens JWT, refresh tokens, dados pessoais
+- **Nunca** logar: senhas, tokens, dados pessoais
 - Senhas devem ser armazenadas com **bcrypt** (mínimo 12 rounds)
 - Respostas de erro não devem expor stack trace em produção
 - Erros internos do banco de dados não devem chegar ao cliente com detalhes técnicos
