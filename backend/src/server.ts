@@ -3,13 +3,13 @@ import helmet from "@fastify/helmet";
 import swagger from "@fastify/swagger";
 import "dotenv/config";
 import Fastify from "fastify";
-import { userRoutes } from "./routes/userRoutes.js";
-import { plantationRoutes } from "./routes/plantationRoutes.js";
-import { harvestRoutes } from "./routes/harvestRoutes.js";
-import { expenseRoutes } from "./routes/expenseRoutes.js";
-import { inventoryRoutes } from "./routes/inventoryRoutes.js";
-import { taskRoutes } from "./routes/taskRoutes.js";
 import { authMiddleware } from "./middlewares/authMiddleware.js";
+import { expenseRoutes } from "./routes/expenseRoutes.js";
+import { harvestRoutes } from "./routes/harvestRoutes.js";
+import { inventoryRoutes } from "./routes/inventoryRoutes.js";
+import { plantationRoutes } from "./routes/plantationRoutes.js";
+import { taskRoutes } from "./routes/taskRoutes.js";
+import { userRoutes } from "./routes/userRoutes.js";
 
 const app = Fastify();
 
@@ -68,8 +68,9 @@ app.get("/docs", async (request, reply) => {
   </body>
 </html>`;
   // CSP relaxado apenas para a página /docs durante desenvolvimento
-  const csp = "default-src 'self' https: data:; script-src 'self' https://unpkg.com 'unsafe-inline'; style-src 'self' https://unpkg.com 'unsafe-inline'; connect-src 'self' https://unpkg.com; img-src 'self' data:;";
-  reply.header('content-security-policy', csp);
+  const csp =
+    "default-src 'self' https: data:; script-src 'self' https://unpkg.com 'unsafe-inline'; style-src 'self' https://unpkg.com 'unsafe-inline'; connect-src 'self' https://unpkg.com; img-src 'self' data:;";
+  reply.header("content-security-policy", csp);
   reply.header("content-type", "text/html; charset=utf-8").send(html);
 });
 
