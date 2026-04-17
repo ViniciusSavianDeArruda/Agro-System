@@ -231,6 +231,24 @@ AppError (base)
 - Mensagens em português
 - Nunca commitar arquivos `.env`, `node_modules`, ou chaves privadas
 
+### Fluxo obrigatório ao enviar alterações para o GitHub
+
+Sempre que eu pedir para levar alterações ao GitHub, você **deve**:
+
+1. Rodar `git status` e me mostrar a saída completa
+2. Analisar cada arquivo alterado e me explicar o que ele representa
+3. Fazer **um commit por vez**, na seguinte ordem:
+   - Infra/config primeiro (ex: `prisma.config.ts`, `docker-compose.yml`)
+   - Arquivos de domínio/entidade (ex: `schema.prisma`)
+   - Camadas internas (repository → service → controller → route)
+   - Testes por último
+4. Para cada commit:
+   - Me explicar **o que está sendo commitado e por quê** antes de rodar o comando
+   - Aguardar minha confirmação antes de executar
+5. Somente após todos os commits, rodar o `git push`
+
+**Nunca agrupar arquivos de responsabilidades diferentes em um único commit.**
+
 ---
 
 ## Como Você Deve Me Ajudar
