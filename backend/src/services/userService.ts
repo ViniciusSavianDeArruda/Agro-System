@@ -1,5 +1,5 @@
-import { UserRepository } from '../repositories/userRepository.js';
 import { pino } from "pino";
+import { UserRepository } from "../repositories/userRepository.js";
 
 const userRepository = new UserRepository();
 const logger = pino();
@@ -13,8 +13,12 @@ export class UserService {
       logger.info({ users }, "[Service] Users fetched in UserService");
       return users;
     } catch (error) {
-      const errMessage = error instanceof Error ? error.message : "Unknown error";
-      logger.error({ error }, "[Service] Error in UserService while fetching users");
+      const errMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      logger.error(
+        { error },
+        "[Service] Error in UserService while fetching users",
+      );
       throw new Error(`Service Error: ${errMessage}`);
     }
   }
@@ -22,14 +26,14 @@ export class UserService {
   // Método para criar um usuário com validação de dados
   async createUser(data: { name: string; email: string }): Promise<any> {
     // Validação simples de email
-    if (!data.email.includes('@')) {
-      throw new Error('Email inválido');
+    if (!data.email.includes("@")) {
+      throw new Error("Email inválido");
     }
 
     // Verifica se o email já existe no banco de dados
     const existingUser = await userRepository.findByEmail(data.email);
     if (existingUser) {
-      throw new Error('Email já está em uso');
+      throw new Error("Email já está em uso");
     }
 
     // Chama o repository para criar o usuário
