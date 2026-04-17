@@ -18,4 +18,14 @@ export const inventoryRepository = {
       where: { id },
     });
   },
+
+  async findAll() {
+    return prisma.inventory.findMany();
+  },
+
+  async findById(id: string) {
+    return prisma.inventory.findUnique({
+      where: { id },
+    });
+  },
 };

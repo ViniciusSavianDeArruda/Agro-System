@@ -1,5 +1,5 @@
-import { prisma } from "../database/prismaClient.js";
 import { pino } from "pino";
+import { prisma } from "../database/prismaClient.js";
 
 const logger = pino();
 
@@ -14,7 +14,10 @@ export class UserRepository {
     } catch (error) {
       const errMessage =
         error instanceof Error ? error.message : "Unknown error";
-      logger.error({ error }, "[Repository] Error fetching users from the database");
+      logger.error(
+        { error },
+        "[Repository] Error fetching users from the database",
+      );
       throw new Error(`Repository Error: ${errMessage}`);
     }
   }
@@ -27,7 +30,8 @@ export class UserRepository {
       logger.info({ user }, "[Repository] User search completed");
       return user;
     } catch (error) {
-      const errMessage = error instanceof Error ? error.message : "Unknown error";
+      const errMessage =
+        error instanceof Error ? error.message : "Unknown error";
       logger.error({ error }, "[Repository] Error searching for user by email");
       throw new Error(`Repository Error: ${errMessage}`);
     }
@@ -37,11 +41,15 @@ export class UserRepository {
   async createUser(data: { name: string; email: string }): Promise<any> {
     try {
       const created = await prisma.user.create({ data });
-      logger.info({ created }, '[Repository] User created successfully');
+      logger.info({ created }, "[Repository] User created successfully");
       return created;
     } catch (error) {
-      const errMessage = error instanceof Error ? error.message : 'Unknown error';
-      logger.error({ error }, '[Repository] Error creating user in the database');
+      const errMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      logger.error(
+        { error },
+        "[Repository] Error creating user in the database",
+      );
       throw new Error(`Repository Error: ${errMessage}`);
     }
   }

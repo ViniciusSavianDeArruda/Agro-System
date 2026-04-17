@@ -1,8 +1,8 @@
-import { prisma } from '../database/prismaClient.js';
-import type { Task } from '@prisma/client';
+import type { Task } from "@prisma/client";
+import { prisma } from "../database/prismaClient.js";
 
 export const taskRepository = {
-  async create(data: Omit<Task, 'id'>): Promise<Task> {
+  async create(data: Omit<Task, "id">): Promise<Task> {
     return prisma.task.create({ data });
   },
 

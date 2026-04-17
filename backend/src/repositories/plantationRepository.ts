@@ -1,4 +1,4 @@
-import { prisma } from '../database/prismaClient.js';
+import { prisma } from "../database/prismaClient.js";
 
 export class PlantationRepository {
   async createPlantation(data: { name: string; userId: string }) {

@@ -1,7 +1,11 @@
-import { prisma } from '../database/prismaClient.js';
+import { prisma } from "../database/prismaClient.js";
 
 export class HarvestRepository {
-  async createHarvest(data: { plantationId: string; revenue: number; date: Date }) {
+  async createHarvest(data: {
+    plantationId: string;
+    revenue: number;
+    date: Date;
+  }) {
     return prisma.harvest.create({ data });
   }
 

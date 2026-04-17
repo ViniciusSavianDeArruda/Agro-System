@@ -1,7 +1,12 @@
-import { prisma } from '../database/prismaClient.js';
+import { prisma } from "../database/prismaClient.js";
 
 export class ExpenseRepository {
-  async createExpense(data: { plantationId: string; description: string; amount: number; date: Date }) {
+  async createExpense(data: {
+    plantationId: string;
+    description: string;
+    amount: number;
+    date: Date;
+  }) {
     return prisma.expense.create({ data });
   }
 
