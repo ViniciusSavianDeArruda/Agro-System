@@ -18,6 +18,7 @@ export async function plantationRoutes(app: FastifyInstance) {
     async (req, reply) => {
       const bodySchema = z.object({
         name: z.string().min(1, "O nome é obrigatório"),
+        userId: z.string().min(1, "O userId é obrigatório"), // Aceita string (nanoid) em vez de UUID
       });
 
       const data = bodySchema.parse(req.body);
@@ -53,7 +54,7 @@ export async function plantationRoutes(app: FastifyInstance) {
     },
     async (req, reply) => {
       const paramsSchema = z.object({
-        id: z.string().uuid("ID inválido"),
+        id: z.string().min(1, "ID inválido"),
       });
 
       const { id } = paramsSchema.parse(req.params);

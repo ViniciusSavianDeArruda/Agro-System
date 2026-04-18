@@ -10,17 +10,21 @@ export const plantationRoutesDocs = {
           type: "string",
           description: "Nome da plantação",
         },
+        userId: {
+          type: "string",
+          description: "ID do usuário ao qual a plantação pertence",
+        },
       },
-      required: ["name"],
+      required: ["name", "userId"], // Adiciona userId como obrigatório
     },
     response: {
       201: {
         description: "Plantação criada com sucesso",
         type: "object",
         properties: {
-          id: { type: "string", format: "uuid" },
+          id: { type: "string" },
           name: { type: "string" },
-          userId: { type: "string", format: "uuid" },
+          userId: { type: "string" },
         },
       },
     },
@@ -34,7 +38,6 @@ export const plantationRoutesDocs = {
       properties: {
         id: {
           type: "string",
-          format: "uuid",
           description: "ID da plantação a ser deletada",
         },
       },
@@ -68,7 +71,7 @@ export const plantationRoutesDocs = {
         items: {
           type: "object",
           properties: {
-            id: { type: "string", format: "uuid" },
+            id: { type: "string" },
             name: { type: "string" },
           },
         },

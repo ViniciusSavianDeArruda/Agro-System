@@ -3,8 +3,9 @@ export const createUserSchema = {
   properties: {
     name: { type: "string" },
     email: { type: "string" },
+    password: { type: "string" }, // Adicionado campo password
   },
-  required: ["name", "email"],
+  required: ["name", "email", "password"],
 };
 
 export const createUserResponseSchema = {

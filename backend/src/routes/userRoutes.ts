@@ -16,8 +16,9 @@ export async function userRoutes(app: FastifyInstance) {
           properties: {
             name: { type: 'string' },
             email: { type: 'string' },
+            password: { type: 'string' }, // Adicionado campo password
           },
-          required: ['name', 'email'],
+          required: ['name', 'email', 'password'],
         },
         response: {
           201: {
@@ -26,6 +27,7 @@ export async function userRoutes(app: FastifyInstance) {
               id: { type: 'string' },
               name: { type: 'string' },
               email: { type: 'string' },
+              password: { type: 'string' }, // Adicionado campo password
             },
           },
           500: {
