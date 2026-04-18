@@ -5,44 +5,6 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-model User {
-  id          String       @id @default(uuid())
-  name        String
-  email       String       @unique
-  inventories Inventory[]
-  plantations Plantation[]
-  tasks       Task[]
-  @@map("user") // Força o nome da tabela para minúsculas
-}
-
-model Plantation {
-  id       String    @id @default(uuid())
-  name     String
-  userId   String
-  expenses Expense[]
-  harvests Harvest[]
-  user     User      @relation(fields: [userId], references: [id])
-  @@map("plantation") // Força o nome da tabela para minúsculas
-}
-
-model Harvest {
-  id           String     @id @default(uuid())
-  plantationId String
-  revenue      Float
-  date         DateTime
-  plantation   Plantation @relation(fields: [plantationId], references: [id])
-  @@map("harvest") // Força o nome da tabela para minúsculas
-}
-
-model Expense {
-  id           String     @id @default(uuid())
-  plantationId String
-  description  String
-  amount       Float
-  date         DateTime
-  plantation   Plantation @relation(fields: [plantationId], references: [id])
-  @@map("expense") // Força o nome da tabela para minúsculas
-}
 
 model Inventory {
   id       String @id @default(uuid())
@@ -59,4 +21,40 @@ model Task {
   date        DateTime
   completed   Boolean  @default(false)
   user        User     @relation(fields: [userId], references: [id])
+}
+
+model Expense {
+  id           String     @id
+  plantationId String
+  description  String
+  amount       Float
+  date         DateTime
+  Plantation   Plantation @relation(fields: [plantationId], references: [id])
+}
+
+model Harvest {
+  id           String     @id
+  plantationId String
+  revenue      Float
+  date         DateTime
+  Plantation   Plantation @relation(fields: [plantationId], references: [id])
+}
+
+model Plantation {
+  id      String    @id
+  name    String
+  userId  String
+  Expense Expense[]
+  Harvest Harvest[]
+  User    User      @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id          String       @id
+  name        String
+  email       String       @unique
+  password    String
+  inventories Inventory[]
+  Plantation  Plantation[]
+  tasks       Task[]
 }
