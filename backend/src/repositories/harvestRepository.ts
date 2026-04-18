@@ -1,4 +1,5 @@
 import { prisma } from "../database/prismaClient.js";
+import { nanoid } from "nanoid";
 
 export class HarvestRepository {
   async createHarvest(data: {
@@ -6,7 +7,8 @@ export class HarvestRepository {
     revenue: number;
     date: Date;
   }) {
-    return prisma.harvest.create({ data });
+    const id = nanoid(10);
+    return prisma.harvest.create({ data: { id, ...data } });
   }
 
   async getHarvestsByPlantation(plantationId: string) {

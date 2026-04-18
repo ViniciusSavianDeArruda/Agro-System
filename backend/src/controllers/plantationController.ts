@@ -6,28 +6,24 @@ const plantationService = new PlantationService();
 export class PlantationController {
   async createPlantation(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const data = req.body as { name: string; userId?: string };
-      if ((req as any).user && typeof (req as any).user === "object") {
-        data.userId = (req as any).user.id;
-      }
-      if (!data.userId) {
-        return reply.status(400).send({ error: "User ID is required" });
-      }
+      const data = req.body as { name: string; userId: string };
+
       const plantation = await plantationService.createPlantation({
         name: data.name,
-        userId: data.userId,
+        userId: data.userId, // Extrai o userId do corpo da requisição
       });
+
       return reply.status(201).send(plantation);
     } catch (error) {
-      return reply.status(400).send({ error: (error as Error).message });
+      return reply.status(500).send({ error: (error as Error).message });
     }
   }
 
   async getPlantationsByUser(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const params = req.params as { userId?: string };
-      const userId = params.userId ?? (req as any).user?.id;
-      const plantations = await plantationService.getPlantationsByUser(userId);
+      const plantations = await plantationService.getPlantationsByUser(
+        "default-user-id", // Usa o userId padrão
+      );
       return reply.send(plantations);
     } catch (error) {
       return reply.status(400).send({ error: (error as Error).message });

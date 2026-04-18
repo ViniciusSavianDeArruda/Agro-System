@@ -1,4 +1,5 @@
 import { prisma } from "../database/prismaClient.js";
+import { nanoid } from "nanoid";
 
 export class ExpenseRepository {
   async createExpense(data: {
@@ -7,7 +8,8 @@ export class ExpenseRepository {
     amount: number;
     date: Date;
   }) {
-    return prisma.expense.create({ data });
+    const id = nanoid(10);
+    return prisma.expense.create({ data: { id, ...data } });
   }
 
   async getExpensesByPlantation(plantationId: string) {

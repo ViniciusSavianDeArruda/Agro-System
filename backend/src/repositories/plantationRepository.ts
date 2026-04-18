@@ -1,8 +1,15 @@
 import { prisma } from "../database/prismaClient.js";
+import { nanoid } from "nanoid";
 
 export class PlantationRepository {
   async createPlantation(data: { name: string; userId: string }) {
-    return prisma.plantation.create({ data });
+    const id = nanoid(10); // Gera um ID curto e único com 10 caracteres
+    return prisma.plantation.create({
+      data: {
+        id,
+        ...data,
+      },
+    });
   }
 
   async getPlantationsByUser(userId: string) {

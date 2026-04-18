@@ -1,5 +1,6 @@
 import { pino } from "pino";
 import { prisma } from "../database/prismaClient.js";
+import { nanoid } from "nanoid";
 
 const logger = pino();
 
@@ -38,17 +39,20 @@ export class UserRepository {
   }
 
   // Método para criar um usuário no banco de dados
-  async createUser(data: { name: string; email: string }): Promise<any> {
+  async createUser(
+    data: { name: string; email: string; password: string }
+  ): Promise<any> {
     try {
-      const created = await prisma.user.create({ data });
-      logger.info({ created }, "[Repository] User created successfully");
+      const id = nanoid(10);
+      const created = await prisma.user.create({ data: { id, ...data } });
+      logger.info({ id: created.id, email: created.email }, "[Repository] User created successfully");
       return created;
     } catch (error) {
       const errMessage =
         error instanceof Error ? error.message : "Unknown error";
       logger.error(
-        { error },
-        "[Repository] Error creating user in the database",
+        { error, data },
+        "[Repository] Error details while creating user",
       );
       throw new Error(`Repository Error: ${errMessage}`);
     }

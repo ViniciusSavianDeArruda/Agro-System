@@ -43,7 +43,7 @@ export class UserController {
       logger.info({ userData }, "[Controller] Received request to create user");
 
       const newUser = await this.userService.createUser(userData);
-      logger.info({ newUser }, "[Controller] User created successfully");
+      logger.info({ userId: newUser.id, email: newUser.email }, "[Controller] User created successfully");
 
       return reply.status(201).send(newUser);
     } catch (error) {
@@ -59,13 +59,8 @@ export class UserController {
         return reply.status(409).send({ error: "Email já está em uso" });
       }
 
-      logger.error(
-        {
-          error,
-          requestBody: request.body,
-        },
-        "[Controller] Error creating user",
-      );
+      // Adiciona detalhes do erro no log para depuração
+      logger.error({ error, requestBody: request.body }, "[Controller] Error details");
 
       return reply
         .status(500)
