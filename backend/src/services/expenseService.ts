@@ -8,6 +8,7 @@ export class ExpenseService {
     description: string;
     amount: number;
     date: Date;
+    userId?: string;
   }) {
     // Regra de negócio: validar se o valor do gasto é positivo
     if (data.amount <= 0) {
