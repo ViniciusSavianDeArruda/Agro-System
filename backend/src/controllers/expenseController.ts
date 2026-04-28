@@ -1,46 +1,37 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { ExpenseService } from "../services/expenseService.js";
 
-const expenseService = new ExpenseService();
+class ExpenseController {
+  private expenseService = new ExpenseService();
 
-export class ExpenseController {
   async createExpense(req: FastifyRequest, reply: FastifyReply) {
-    try {
-      const data = req.body as {
-        plantationId: string;
-        description: string;
-        amount: number;
-        date: Date;
-        userId?: string;
-      };
-      if ((req as any).user && typeof (req as any).user === "object") {
-        data.userId = (req as any).user.id;
-      }
-      const expense = await expenseService.createExpense(data);
-      return reply.status(201).send(expense);
-    } catch (error) {
-      return reply.status(400).send({ error: (error as Error).message });
-    }
+    const userId = (req as any).user?.id;
+
+    const expense = await this.expenseService.createExpense({
+      ...(req.body as any),
+      userId,
+      date: new Date((req.body as any).date),
+    });
+
+    return reply.status(201).send(expense);
   }
 
   async getExpensesByPlantation(req: FastifyRequest, reply: FastifyReply) {
-    try {
-      const { plantationId } = req.params as { plantationId: string };
-      const expenses =
-        await expenseService.getExpensesByPlantation(plantationId);
-      return reply.send(expenses);
-    } catch (error) {
-      return reply.status(400).send({ error: (error as Error).message });
-    }
+    const { plantationId } = req.params as any;
+
+    const expenses =
+      await this.expenseService.getExpensesByPlantation(plantationId);
+
+    return reply.send(expenses);
   }
 
   async deleteExpense(req: FastifyRequest, reply: FastifyReply) {
-    try {
-      const { id } = req.params as { id: string };
-      await expenseService.deleteExpense(id);
-      return reply.status(204).send();
-    } catch (error) {
-      return reply.status(400).send({ error: (error as Error).message });
-    }
+    const { id } = req.params as any;
+
+    await this.expenseService.deleteExpense(id);
+
+    return reply.status(204).send();
   }
 }
+
+export const expenseController = new ExpenseController();

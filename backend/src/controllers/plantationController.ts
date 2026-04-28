@@ -1,42 +1,48 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { PlantationService } from "../services/plantationService.js";
 
-const plantationService = new PlantationService();
+interface ParamsWithId {
+  id: string;
+}
+
+type CreatePlantationBody = {
+  name: string;
+};
 
 export class PlantationController {
-  async createPlantation(req: FastifyRequest, reply: FastifyReply) {
-    try {
-      const data = req.body as { name: string; userId: string };
+  private plantationService = new PlantationService();
 
-      const plantation = await plantationService.createPlantation({
-        name: data.name,
-        userId: data.userId, // Extrai o userId do corpo da requisição
-      });
+  async createPlantation(
+    req: FastifyRequest<{ Body: CreatePlantationBody }>,
+    reply: FastifyReply
+  ) {
+    const plantation = await this.plantationService.createPlantation({
+      ...req.body,
+      userId: (req as any).user?.id,
+    });
 
-      return reply.status(201).send(plantation);
-    } catch (error) {
-      return reply.status(500).send({ error: (error as Error).message });
-    }
+    return reply.status(201).send(plantation);
   }
 
   async getPlantationsByUser(req: FastifyRequest, reply: FastifyReply) {
-    try {
-      const plantations = await plantationService.getPlantationsByUser(
-        "default-user-id", // Usa o userId padrão
-      );
-      return reply.send(plantations);
-    } catch (error) {
-      return reply.status(400).send({ error: (error as Error).message });
-    }
+    const userId = (req as any).user?.id;
+
+    const plantations =
+      await this.plantationService.getPlantationsByUser(userId);
+
+    return reply.send(plantations);
   }
 
-  async deletePlantation(req: FastifyRequest, reply: FastifyReply) {
-    try {
-      const { id } = req.params as { id: string };
-      await plantationService.deletePlantation(id);
-      return reply.status(204).send();
-    } catch (error) {
-      return reply.status(400).send({ error: (error as Error).message });
-    }
+  async deletePlantation(
+    req: FastifyRequest<{ Params: ParamsWithId }>,
+    reply: FastifyReply
+  ) {
+    const { id } = req.params;
+
+    await this.plantationService.deletePlantation(id);
+
+    return reply.status(204).send();
   }
 }
+
+export const plantationController = new PlantationController();

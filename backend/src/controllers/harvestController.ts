@@ -3,43 +3,32 @@ import { HarvestService } from "../services/harvestService.js";
 
 const harvestService = new HarvestService();
 
-export class HarvestController {
+class HarvestController {
   async createHarvest(req: FastifyRequest, reply: FastifyReply) {
-    try {
-      const data = req.body as {
-        plantationId: string;
-        revenue: number;
-        date: Date;
-        userId?: string;
-      };
-      if ((req as any).user && typeof (req as any).user === "object") {
-        data.userId = (req as any).user.id;
-      }
-      const harvest = await harvestService.createHarvest(data);
-      return reply.status(201).send(harvest);
-    } catch (error) {
-      return reply.status(400).send({ error: (error as Error).message });
-    }
+    const harvest = await harvestService.createHarvest({
+      ...(req.body as any),
+      userId: (req as any).user?.id,
+    });
+
+    return reply.status(201).send(harvest);
   }
 
   async getHarvestsByPlantation(req: FastifyRequest, reply: FastifyReply) {
-    try {
-      const { plantationId } = req.params as { plantationId: string };
-      const harvests =
-        await harvestService.getHarvestsByPlantation(plantationId);
-      return reply.send(harvests);
-    } catch (error) {
-      return reply.status(400).send({ error: (error as Error).message });
-    }
+    const { plantationId } = req.params as any;
+
+    const harvests =
+      await harvestService.getHarvestsByPlantation(plantationId);
+
+    return reply.send(harvests);
   }
 
   async deleteHarvest(req: FastifyRequest, reply: FastifyReply) {
-    try {
-      const { id } = req.params as { id: string };
-      await harvestService.deleteHarvest(id);
-      return reply.status(204).send();
-    } catch (error) {
-      return reply.status(400).send({ error: (error as Error).message });
-    }
+    const { id } = req.params as any;
+
+    await harvestService.deleteHarvest(id);
+
+    return reply.status(204).send();
   }
 }
+
+export const harvestController = new HarvestController();
