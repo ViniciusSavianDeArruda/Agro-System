@@ -8,14 +8,21 @@ export class HarvestRepository {
     date: Date;
   }) {
     const id = nanoid(10);
-    return prisma.harvest.create({ data: { id, ...data } });
+
+    return prisma.harvest.create({
+      data: { id, ...data },
+    });
   }
 
   async getHarvestsByPlantation(plantationId: string) {
-    return prisma.harvest.findMany({ where: { plantationId } });
+    return prisma.harvest.findMany({
+      where: { plantationId },
+    });
   }
 
   async deleteHarvest(id: string) {
-    return prisma.harvest.delete({ where: { id } });
+    return prisma.harvest.delete({
+      where: { id },
+    });
   }
 }

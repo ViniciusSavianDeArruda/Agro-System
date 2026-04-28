@@ -3,7 +3,8 @@ import { nanoid } from "nanoid";
 
 export class PlantationRepository {
   async createPlantation(data: { name: string; userId: string }) {
-    const id = nanoid(10); // Gera um ID curto e único com 10 caracteres
+    const id = nanoid(10);
+
     return prisma.plantation.create({
       data: {
         id,
@@ -13,10 +14,14 @@ export class PlantationRepository {
   }
 
   async getPlantationsByUser(userId: string) {
-    return prisma.plantation.findMany({ where: { userId } });
+    return prisma.plantation.findMany({
+      where: { userId },
+    });
   }
 
   async deletePlantation(id: string) {
-    return prisma.plantation.delete({ where: { id } });
+    return prisma.plantation.delete({
+      where: { id },
+    });
   }
 }

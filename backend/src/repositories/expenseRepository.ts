@@ -9,14 +9,21 @@ export class ExpenseRepository {
     date: Date;
   }) {
     const id = nanoid(10);
-    return prisma.expense.create({ data: { id, ...data } });
+
+    return prisma.expense.create({
+      data: { id, ...data },
+    });
   }
 
   async getExpensesByPlantation(plantationId: string) {
-    return prisma.expense.findMany({ where: { plantationId } });
+    return prisma.expense.findMany({
+      where: { plantationId },
+    });
   }
 
   async deleteExpense(id: string) {
-    return prisma.expense.delete({ where: { id } });
+    return prisma.expense.delete({
+      where: { id },
+    });
   }
 }
