@@ -1,67 +1,104 @@
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { PlantationController } from "../controllers/plantationController.js";
-import { plantationRoutesDocs } from "../docs/plantationSchemas.js";
 
 const plantationController = new PlantationController();
 
 export async function plantationRoutes(app: FastifyInstance) {
-  // Rota POST /plantations
+
   app.post(
     "/plantations",
     {
       schema: {
-        ...plantationRoutesDocs.createPlantation,
         tags: ["Plantations"],
+        summary: "Cria plantação",
+
+        body: {
+          type: "object",
+          required: ["name", "userId"],
+          properties: {
+            name: { type: "string" },
+            userId: { type: "string" },
+          },
+        },
+
+        response: {
+          201: {
+            type: "object",
+            properties: {
+              id: { type: "string" },
+              name: { type: "string" },
+              userId: { type: "string" },
+            },
+          },
+        },
       },
     },
     async (req, reply) => {
-      const bodySchema = z.object({
-        name: z.string().min(1, "O nome é obrigatório"),
-        userId: z.string().min(1, "O userId é obrigatório"), // Aceita string (nanoid) em vez de UUID
-      });
+      const data = z
+        .object({
+          name: z.string().min(1),
+          userId: z.string().min(1),
+        })
+        .parse(req.body);
 
-      const data = bodySchema.parse(req.body);
       return plantationController.createPlantation(
         { ...req, body: data },
-        reply,
+        reply
       );
-    },
+    }
   );
 
-  // Rota GET /plantations
   app.get(
     "/plantations",
     {
       schema: {
-        ...plantationRoutesDocs.getPlantations,
         tags: ["Plantations"],
+        summary: "Lista plantações do usuário",
+
+        response: {
+          200: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                id: { type: "string" },
+                name: { type: "string" },
+                userId: { type: "string" },
+              },
+            },
+          },
+        },
       },
     },
-    async (req, reply) => {
-      return plantationController.getPlantationsByUser(req, reply);
-    },
+    plantationController.getPlantationsByUser.bind(plantationController)
   );
 
-  // Rota DELETE /plantations/:id
   app.delete(
     "/plantations/:id",
     {
       schema: {
-        ...plantationRoutesDocs.deletePlantation,
         tags: ["Plantations"],
+        summary: "Remove plantação",
+
+        params: {
+          type: "object",
+          required: ["id"],
+          properties: {
+            id: { type: "string" },
+          },
+        },
       },
     },
     async (req, reply) => {
-      const paramsSchema = z.object({
-        id: z.string().min(1, "ID inválido"),
-      });
+      const { id } = z
+        .object({ id: z.string().min(1) })
+        .parse(req.params);
 
-      const { id } = paramsSchema.parse(req.params);
       return plantationController.deletePlantation(
         { ...req, params: { id } },
-        reply,
+        reply
       );
-    },
+    }
   );
 }

@@ -1,39 +1,33 @@
-import type { FastifyInstance } from 'fastify';
-import { UserController } from '../controllers/UserController.js';
+import type { FastifyInstance } from "fastify";
+import { UserController } from "../controllers/UserController.js";
 
 const userController = new UserController();
 
 export async function userRoutes(app: FastifyInstance) {
-  // Rota para criar um novo usuário
   app.post(
-    '/users',
+    "/users",
     {
       schema: {
-        tags: ['Users'],
-        summary: 'Cria um novo usuário',
+        tags: ["Users"],
+        summary: "Cria usuário",
+
         body: {
-          type: 'object',
+          type: "object",
+          required: ["name", "email", "password"],
           properties: {
-            name: { type: 'string' },
-            email: { type: 'string' },
-            password: { type: 'string' }, // Adicionado campo password
+            name: { type: "string" },
+            email: { type: "string" },
+            password: { type: "string" },
           },
-          required: ['name', 'email', 'password'],
         },
+
         response: {
           201: {
-            type: 'object',
+            type: "object",
             properties: {
-              id: { type: 'string' },
-              name: { type: 'string' },
-              email: { type: 'string' },
-              password: { type: 'string' }, // Adicionado campo password
-            },
-          },
-          500: {
-            type: 'object',
-            properties: {
-              error: { type: 'string' },
+              id: { type: "string" },
+              name: { type: "string" },
+              email: { type: "string" },
             },
           },
         },
@@ -42,36 +36,30 @@ export async function userRoutes(app: FastifyInstance) {
     userController.createUser.bind(userController)
   );
 
-  // Rota para listar todos os usuários
   app.get(
-    '/users',
+    "/users",
     {
       schema: {
-        tags: ['Users'],
-        summary: 'Lista todos os usuários',
+        tags: ["Users"],
+        summary: "Lista usuários",
+
         response: {
           200: {
-            type: 'object',
+            type: "object",
             properties: {
-              message: { type: 'string' },
-              count: { type: 'number' },
+              message: { type: "string" },
+              count: { type: "number" },
               users: {
-                type: 'array',
+                type: "array",
                 items: {
-                  type: 'object',
+                  type: "object",
                   properties: {
-                    id: { type: 'string' },
-                    name: { type: 'string' },
-                    email: { type: 'string' },
+                    id: { type: "string" },
+                    name: { type: "string" },
+                    email: { type: "string" },
                   },
                 },
               },
-            },
-          },
-          500: {
-            type: 'object',
-            properties: {
-              error: { type: 'string' },
             },
           },
         },

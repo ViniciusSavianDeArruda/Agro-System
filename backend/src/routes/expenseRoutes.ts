@@ -1,65 +1,77 @@
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
-import { ExpenseController } from "../controllers/expenseController.js";
-import { expenseRoutesDocs } from "../docs/expenseSchemas.js";
-
-const createExpenseSchema = {
-  type: "object",
-  properties: {
-    plantationId: { type: "string", format: "uuid" },
-    description: { type: "string" },
-    amount: { type: "number" },
-    date: { type: "string", format: "date" },
-  },
-  required: ["plantationId", "description", "amount", "date"],
-};
-
-const expenseController = new ExpenseController();
+import { expenseController } from "../controllers/expenseController.js";
 
 export async function expenseRoutes(app: FastifyInstance) {
+
   app.post(
     "/expenses",
     {
       schema: {
-        ...expenseRoutesDocs.createExpense,
         tags: ["Expenses"],
-        body: createExpenseSchema,
+        summary: "Cria despesa",
+
+        body: {
+          type: "object",
+          required: ["plantationId", "description", "amount", "date"],
+          properties: {
+            plantationId: { type: "string", format: "uuid" },
+            description: { type: "string" },
+            amount: { type: "number" },
+            date: { type: "string", format: "date-time" },
+          },
+        },
       },
     },
     async (req, reply) => {
       const data = z
         .object({
-          plantationId: z.string().uuid("ID da plantação inválido"),
-          description: z.string().min(1, "Descrição é obrigatória"),
-          amount: z.number().positive("O valor deve ser positivo"),
-          date: z.string().datetime("Data inválida"),
+          plantationId: z.string().uuid(),
+          description: z.string().min(1),
+          amount: z.number().positive(),
+          date: z.string().datetime(),
         })
         .parse(req.body);
-      return expenseController.createExpense({ ...req, body: data }, reply);
-    },
+
+      return expenseController.createExpense(req, reply);
+    }
   );
 
   app.get(
     "/plantations/:plantationId/expenses",
     {
       schema: {
-        ...expenseRoutesDocs.getExpensesByPlantation,
         tags: ["Expenses"],
+        summary: "Lista despesas da plantação",
+
+        params: {
+          type: "object",
+          required: ["plantationId"],
+          properties: {
+            plantationId: { type: "string" },
+          },
+        },
       },
     },
-    async (req, reply) => {
-      return expenseController.getExpensesByPlantation(req, reply);
-    },
+    (req, reply) => expenseController.getExpensesByPlantation(req, reply)
   );
 
   app.delete(
     "/expenses/:id",
     {
       schema: {
-        ...expenseRoutesDocs.deleteExpense,
         tags: ["Expenses"],
+        summary: "Remove despesa",
+
+        params: {
+          type: "object",
+          required: ["id"],
+          properties: {
+            id: { type: "string" },
+          },
+        },
       },
     },
-    expenseController.deleteExpense,
+    (req, reply) => expenseController.deleteExpense(req, reply)
   );
 }
