@@ -6,12 +6,24 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id          String       @id @default(uuid())
+  name        String
+  email       String       @unique
+  password    String
+
+  inventories Inventory[]
+  plantations Plantation[]
+  tasks       Task[]
+}
+
 model Inventory {
   id       String @id @default(uuid())
   userId   String
   item     String
   quantity Int
-  user     User   @relation(fields: [userId], references: [id])
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Task {
@@ -20,41 +32,36 @@ model Task {
   description String
   date        DateTime
   completed   Boolean  @default(false)
-  user        User     @relation(fields: [userId], references: [id])
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Plantation {
+  id      String @id @default(uuid())
+  name    String
+  userId  String
+
+  expenses Expense[]
+  harvests Harvest[]
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Expense {
-  id           String     @id
+  id           String     @id @default(uuid())
   plantationId String
   description  String
   amount       Float
   date         DateTime
-  Plantation   Plantation @relation(fields: [plantationId], references: [id])
+
+  plantation Plantation @relation(fields: [plantationId], references: [id], onDelete: Cascade)
 }
 
 model Harvest {
-  id           String     @id
+  id           String     @id @default(uuid())
   plantationId String
   revenue      Float
   date         DateTime
-  Plantation   Plantation @relation(fields: [plantationId], references: [id])
-}
 
-model Plantation {
-  id      String    @id
-  name    String
-  userId  String
-  Expense Expense[]
-  Harvest Harvest[]
-  User    User      @relation(fields: [userId], references: [id])
-}
-
-model User {
-  id          String       @id
-  name        String
-  email       String       @unique
-  password    String
-  inventories Inventory[]
-  Plantation  Plantation[]
-  tasks       Task[]
-}
+  plantation Plantation @relation(fields: [plantationId], references: [id], onDelete: Cascade)
+} 
