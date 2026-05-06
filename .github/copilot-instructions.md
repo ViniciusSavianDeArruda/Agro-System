@@ -366,13 +366,16 @@ Este projeto também é um processo de aprendizado. Cada etapa que formos constr
 ## Regras de Negócio
 
 ### Acesso aos Dados
+
 - Cada usuário só pode acessar seus próprios dados, verificado no service via `userId` do token.
 
 ### Relacionamentos
+
 - Plantações pertencem a um único usuário.
 - Gastos e colheitas estão vinculados a uma plantação.
 
 ### Validações
+
 - Estoque não pode ficar negativo. **(A ser implementado)**
 - Lucro é calculado como: `receita da colheita - total de gastos da plantação`. **(A ser implementado no PlantationService)**
 - O valor do gasto deve ser maior que zero (implementado no `ExpenseService`).
@@ -380,7 +383,61 @@ Este projeto também é um processo de aprendizado. Cada etapa que formos constr
 - Não pode haver duas plantações com o mesmo nome para o mesmo usuário (implementado no `PlantationService`).
 
 ### Tarefas
+
 - Tarefas têm data e status de conclusão (`completed: boolean`).
 - **Validações adicionais necessárias**: garantir que as tarefas tenham uma data válida e status consistente.
+
+---
+
+## Autenticação e Login
+
+### Login com Google
+
+1. **Configuração do Google OAuth 2.0**:
+   - Crie um projeto no [Google Cloud Console](https://console.cloud.google.com/).
+   - Ative a API "Google OAuth 2.0".
+   - Configure as credenciais de cliente OAuth (Client ID e Client Secret).
+   - Adicione o URI de redirecionamento (exemplo: `http://localhost:3333/auth/google/callback`).
+
+2. **Dependências Necessárias**:
+   - Instale `@fastify/oauth2` para lidar com o fluxo OAuth 2.0.
+
+3. **Rotas de Autenticação**:
+   - Crie uma rota para redirecionar o usuário ao Google para login.
+   - Crie uma rota de callback para processar o retorno do Google e gerar o token JWT.
+
+4. **Exemplo de Implementação**:
+   - Veja o arquivo `src/routes/authRoutes.ts` para detalhes sobre como configurar o login com Google.
+
+### Autenticação com JWT
+
+1. **Dependências Necessárias**:
+   - Instale `jsonwebtoken` para gerar e validar tokens JWT.
+   - Instale `bcrypt` para hash de senhas.
+
+2. **Fluxo de Registro e Login**:
+   - **Registro**: Crie uma rota para registrar novos usuários, armazenando senhas com hash.
+   - **Login**: Crie uma rota para autenticar o usuário e gerar um token JWT.
+
+3. **Middleware de Autenticação**:
+   - Adicione um middleware para validar o token JWT em rotas protegidas.
+   - Veja o arquivo `src/plugins/authMiddleware.ts` para detalhes.
+
+4. **Exemplo de Rotas**:
+   - **Registro**: `POST /auth/register`
+   - **Login**: `POST /auth/login`
+   - **Rota Protegida**: `GET /protected` (exige token JWT válido).
+
+5. **Configuração do `.env`**:
+   - Adicione as seguintes variáveis ao arquivo `.env`:
+     ```env
+     JWT_SECRET=sua-chave-secreta
+     GOOGLE_CLIENT_ID=seu-client-id
+     GOOGLE_CLIENT_SECRET=seu-client-secret
+     ```
+
+6. **Segurança**:
+   - Tokens JWT devem expirar após um período (ex.: 1 hora).
+   - Sempre valide e sanitize os dados de entrada com Zod.
 
 ---

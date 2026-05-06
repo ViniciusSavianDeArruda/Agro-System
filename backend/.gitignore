@@ -3,7 +3,7 @@ node_modules/
 
 # Arquivos de ambiente 
 .env
-.env.*
+!.env.example
 
 # Docker volumes (caso use pasta local)
 postgres_data/
