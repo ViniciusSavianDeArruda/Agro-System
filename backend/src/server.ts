@@ -1,5 +1,5 @@
-import cors from "@fastify/cors";
 import fastifyCookie from "@fastify/cookie";
+import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import swagger from "@fastify/swagger";
 import "dotenv/config";
@@ -52,31 +52,21 @@ app.get("/docs/json", async () => {
   return app.swagger();
 });
 
-// Swagger UI
+// Swagger UI 
 app.get("/docs", async (req, reply) => {
   reply.type("text/html").send(`
 <!DOCTYPE html>
 <html>
 <head>
   <title>Agro System API</title>
-
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css"
-  />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css" />
 </head>
-
 <body>
   <div id="swagger-ui"></div>
-
   <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
-
   <script>
     window.onload = () => {
-      SwaggerUIBundle({
-        url: "/docs/json",
-        dom_id: "#swagger-ui",
-      });
+      SwaggerUIBundle({ url: "/docs/json", dom_id: "#swagger-ui" });
     };
   </script>
 </body>
@@ -84,11 +74,9 @@ app.get("/docs", async (req, reply) => {
   `);
 });
 
-// Rota raiz
+// Rota raiz (health check)
 app.get("/", async () => {
-  return {
-    message: "API Agro System rodando",
-  };
+  return { message: "API Agro System rodando" };
 });
 
 // Rotas
@@ -100,22 +88,14 @@ app.register(expenseRoutes);
 app.register(inventoryRoutes);
 app.register(taskRoutes);
 
-// Porta
+// Iniciar servidor
 const PORT = Number(process.env.PORT) || 3333;
 
-// Debug
-function mask(value?: string) {
-  if (!value) return "(undefined)";
-
-  if (value.length <= 8) return "****";
-
-  return `${value.slice(0, 4)}...${value.slice(-4)}`;
-}
-
-// Iniciar servidor
-app.listen({
-  port: PORT,
-  host: "0.0.0.0",
-}).then(() => {
-  console.log("Servidor rodando na porta", PORT);
-});
+app
+  .listen({
+    port: PORT,
+    host: "0.0.0.0",
+  })
+  .then(() => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+  });
