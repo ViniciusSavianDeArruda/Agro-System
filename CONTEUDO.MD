@@ -10,7 +10,7 @@ Este README não é só uma documentação — é uma **aula prática**. Aqui vo
 
 ---
 
-## 🗂️ Índice
+## 🗂️ Índices
 
 1. [O que é o Agro System?](#-o-que-é-o-agro-system)
 2. [O que você vai aprender construindo isso?](#-o-que-você-vai-aprender-construindo-isso)
